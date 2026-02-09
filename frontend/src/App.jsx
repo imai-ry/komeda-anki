@@ -11,6 +11,7 @@ function App() {
   const [feedback, setFeedback] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
+  const [showAnswers, setShowAnswers] = useState(false);
 
   // 初期化ロード
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
     setSelections({});
     setActiveOrderIndex(0);
     setFeedback(null);
+    setShowAnswers(false);
   }, [data]);
 
   useEffect(() => {
@@ -92,13 +94,18 @@ function App() {
 
     setFeedback({
       status: allCorrect ? 'success' : 'error',
-      message: allCorrect ? 'すべてのセットが正解です！' : '一部のセットが間違っています。',
+      message: allCorrect ? 'すべてのセットが正解です！' : 'セットが間違っています。やり直してください。',
       answers: detailedAnswers
     });
   };
 
-  const nextQuestion = () => {
-    generateQuestion();
+  const handleNext = () => {
+    setShowAnswers(false);
+    if (feedback.status === 'success') {
+      generateQuestion();
+    } else {
+      setFeedback(null);
+    }
   };
 
   if (!data) return <div className="loading">ロード中...</div>;
@@ -112,7 +119,10 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>コメダセット暗記</h1>
+        <div className="header-left">
+          <h1>コメダセット暗記</h1>
+          <button className="refresh-btn" onClick={generateQuestion} title="問題を更新">🔄</button>
+        </div>
         <button className="admin-toggle" onClick={() => setIsAdmin(true)}>⚙️</button>
       </header>
 
@@ -185,11 +195,7 @@ function App() {
       </main>
 
       <footer>
-        {feedback ? (
-          <button className="serve-button next-btn" onClick={nextQuestion}>次へ進む</button>
-        ) : (
-          <button className="serve-button" onClick={handleServe}>提供 (Serve)</button>
-        )}
+        <button className="serve-button" onClick={handleServe}>提供 (Serve)</button>
       </footer>
 
       {feedback && (
@@ -198,19 +204,32 @@ function App() {
             <div className="feedback-status-icon">{feedback.status === 'success' ? '✅' : '❌'}</div>
             <h2>{feedback.message}</h2>
 
-            <div className="answers-box">
-              <h3>判定結果:</h3>
-              {feedback.answers.map((ans, i) => (
-                <div key={i} className={`answer-item-row ${ans.isCorrect ? 'correct' : 'incorrect'}`}>
-                  <div className="order-label">
-                    {ans.isCorrect ? '◯' : '×'} {ans.displayName}
-                  </div>
-                  <div className="parts-label">正解: {ans.requiredParts.join(' / ')}</div>
+            <div className="answers-container">
+              <button
+                className="toggle-answers-btn"
+                onClick={() => setShowAnswers(!showAnswers)}
+              >
+                {showAnswers ? '▲ 正解を隠す' : '▼ 正解を確認する'}
+              </button>
+
+              {showAnswers && (
+                <div className="answers-box">
+                  <h3>判定結果:</h3>
+                  {feedback.answers.map((ans, i) => (
+                    <div key={i} className={`answer-item-row ${ans.isCorrect ? 'correct' : 'incorrect'}`}>
+                      <div className="order-label">
+                        {ans.isCorrect ? '◯' : '×'} {ans.displayName}
+                      </div>
+                      <div className="parts-label">正解: {ans.requiredParts.join(' / ')}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
 
-            <button className="modal-next-btn" onClick={nextQuestion}>次へ進む</button>
+            <button className={`modal-next-btn ${feedback.status}`} onClick={handleNext}>
+              {feedback.status === 'success' ? '次の問題へ' : 'やり直す'}
+            </button>
           </div>
         </div>
       )}
