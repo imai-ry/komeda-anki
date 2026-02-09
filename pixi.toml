@@ -1,0 +1,11 @@
+[workspace]
+authors = ["Ryota Imai <imai.ry.res@gmail.com>"]
+channels = ["conda-forge"]
+name = "komeda-anki"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+nodejs = ">=20"

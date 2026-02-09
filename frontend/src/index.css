@@ -1,0 +1,581 @@
+:root {
+    --komeda-red: #cc0000;
+    --komeda-wood: #8b4513;
+    --komeda-cream: #fffaf0;
+    --komeda-brown: #3e2723;
+    --glass-bg: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: var(--komeda-brown);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#root {
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    background: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 15px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+header h1 {
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.admin-toggle {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Order Section with Grid */
+.order-section {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+}
+
+.receipt-title {
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #666;
+    border-bottom: 1px dashed #ddd;
+}
+
+.order-grid {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.order-card {
+    flex: 0 0 130px;
+    background: #fdfdfd;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-card.active {
+    border-color: var(--komeda-red);
+    background: #fffafa;
+    box-shadow: 0 4px 12px rgba(204, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.order-card.furnished {
+    border-style: solid;
+}
+
+.order-header {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.order-num {
+    background: #eee;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: bold;
+}
+
+.order-card.active .order-num {
+    background: var(--komeda-red);
+    color: white;
+}
+
+.order-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-tray {
+    height: 25px;
+    display: flex;
+    gap: 2px;
+    overflow: hidden;
+    border-top: 1px dotted #ddd;
+    padding-top: 3px;
+}
+
+.mini-part {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Tray Section */
+.tray-section {
+    flex: 1;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.tray-header {
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.tray-items {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: flex-start;
+    overflow-y: auto;
+}
+
+.tray-placeholder {
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.tray-item {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    padding: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tray-item img {
+    width: 100%;
+    height: 35px;
+    object-fit: contain;
+}
+
+/* Selection Area */
+.selection-area {
+    flex: 0 0 260px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.category-tabs button {
+    white-space: nowrap;
+    padding: 5px 12px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.category-tabs button.active {
+    background: var(--komeda-red);
+    color: white;
+    border-color: var(--komeda-red);
+}
+
+.parts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.menu-card {
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.menu-image {
+    width: 100%;
+    height: 40px;
+}
+
+.menu-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.menu-name {
+    font-size: 0.6rem;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Footer & Buttons */
+footer {
+    padding: 10px 0;
+}
+
+.serve-button {
+    width: 100%;
+    padding: 14px;
+    background: var(--komeda-red);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #990000;
+}
+
+.serve-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #990000;
+}
+
+.next-btn {
+    background: var(--komeda-brown);
+}
+
+/* Feedback Overlay */
+.feedback-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.feedback-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feedback-status-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.feedback-content h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+
+.answers-box {
+    text-align: left;
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 25px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.answers-box h3 {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #efefef;
+    padding-bottom: 5px;
+}
+
+.answer-item-row {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.answer-item-row:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.order-label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.answer-item-row.correct .order-label {
+    color: #2e7d32;
+}
+
+.answer-item-row.incorrect .order-label {
+    color: #c62828;
+}
+
+.parts-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+    padding-left: 8px;
+    border-left: 2px solid #ddd;
+}
+
+.modal-next-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--komeda-red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* Admin Dashboard (Minimized for brevity, preserved overall logic) */
+.admin-dashboard {
+    background: #f5f5f5;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.admin-header {
+    padding: 15px;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-header h2 {
+    font-size: 1.2rem;
+}
+
+.admin-tabs {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-tabs button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    font-weight: bold;
+    color: #666;
+    border-bottom: 3px solid transparent;
+}
+
+.admin-tabs button.active {
+    color: var(--komeda-red);
+    border-bottom-color: var(--komeda-red);
+}
+
+.admin-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.part-list-item,
+.order-list-item {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.part-list-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.part-list-item .name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.actions button {
+    padding: 4px 8px;
+    margin-left: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.preview-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-top: 10px;
+}
+
+.part-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.selector-item {
+    border: 1px solid #eee;
+    padding: 5px;
+    opacity: 0.5;
+    font-size: 0.6rem;
+}
+
+.selector-item.active {
+    border-color: var(--komeda-red);
+    opacity: 1;
+}
+
+.selector-item img {
+    width: 100%;
+    height: 30px;
+    object-fit: contain;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
