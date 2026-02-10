@@ -15,11 +15,23 @@ function App() {
   const [quizMode, setQuizMode] = useState('random'); // 'random' | 'weakness'
   const [zoomedItem, setZoomedItem] = useState(null);
 
-  // Derive dynamic categories from parts
+  // Derive dynamic categories from parts, following pre-defined order if available
   const partCategories = useMemo(() => {
     if (!data) return [];
-    return Array.from(new Set(data.parts.map(p => p.category || '未分類')));
-  }, [data?.parts]);
+    const inUse = Array.from(new Set(data.parts.map(p => p.category || '未分類')));
+    const preDefined = data.partCategories || [];
+
+    // Sort in-use categories by their position in pre-defined list
+    return inUse.sort((a, b) => {
+      if (a === '未分類') return 1;
+      if (b === '未分類') return -1;
+      const indexA = preDefined.indexOf(a);
+      const indexB = preDefined.indexOf(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }, [data?.parts, data?.partCategories]);
 
   // Ensure activeCategory is valid and set initial if null
   useEffect(() => {

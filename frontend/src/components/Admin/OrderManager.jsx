@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-const OrderManager = ({ orderMasters, parts, onUpdate }) => {
+const OrderManager = ({ orderMasters, parts, categoryList, partCategoryList, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState({ displayName: '', shortName: '', category: '', requiredPartIds: [] });
 
-    // Derive dynamic categories
-    const orderCategories = Array.from(new Set(orderMasters.map(o => o.category || '未分類')));
-    const partCategories = Array.from(new Set(parts.map(p => p.category || '未分類')));
+    // Derive dynamic categories (pre-defined + any already in use)
+    const orderCategories = Array.from(new Set([...categoryList, ...orderMasters.map(o => o.category || '未分類')]));
+    const partCategories = Array.from(new Set([...partCategoryList, ...parts.map(p => p.category || '未分類')]));
 
     const [activeCategory, setActiveCategory] = useState(orderCategories[0] || '未分類');
     const [activePartCategory, setActivePartCategory] = useState(partCategories[0] || '未分類');
@@ -89,16 +89,17 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                             </div>
 
                             <div className="form-group">
-                                <label>表示カテゴリ (自由入力)</label>
-                                <input
-                                    list="order-categories"
+                                <label>表示カテゴリ</label>
+                                <select
                                     value={form.category}
                                     onChange={e => setForm({ ...form, category: e.target.value })}
-                                    placeholder="例: ドリンク"
-                                />
-                                <datalist id="order-categories">
-                                    {orderCategories.filter(c => c !== '未分類').map(c => <option key={c} value={c} />)}
-                                </datalist>
+                                >
+                                    <option value="">未分類</option>
+                                    {categoryList.map(c => <option key={c} value={c}>{c}</option>)}
+                                    {form.category && !categoryList.includes(form.category) && (
+                                        <option value={form.category}>{form.category} (削除済み)</option>
+                                    )}
+                                </select>
                             </div>
 
                             <div className="editor-tray-section">

@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import PartManager from './PartManager';
 import OrderManager from './OrderManager';
+import CategoryManager from './CategoryManager';
 import { exportData, importData } from '../../utils/storage';
 
 const AdminDashboard = ({ data, onUpdateData, onClose }) => {
     const [tab, setTab] = useState('parts');
+
+    const partCategories = data.partCategories || [];
+    const orderCategories = data.orderCategories || [];
 
     const resetStats = () => {
         if (window.confirm('統計情報をリセットしてもよろしいですか？')) {
@@ -47,6 +51,7 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
             <nav className="admin-tabs">
                 <button className={tab === 'parts' ? 'active' : ''} onClick={() => setTab('parts')}>パーツ</button>
                 <button className={tab === 'orders' ? 'active' : ''} onClick={() => setTab('orders')}>注文セット</button>
+                <button className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>カテゴリ</button>
                 <button className={tab === 'stats' ? 'active' : ''} onClick={() => setTab('stats')}>統計</button>
                 <button className={tab === 'data' ? 'active' : ''} onClick={() => setTab('data')}>データ</button>
             </nav>
@@ -55,6 +60,7 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
                 {tab === 'parts' && (
                     <PartManager
                         parts={data.parts}
+                        categoryList={partCategories}
                         onUpdate={(newParts) => onUpdateData({ ...data, parts: newParts })}
                     />
                 )}
@@ -62,7 +68,17 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
                     <OrderManager
                         orderMasters={data.orderMasters}
                         parts={data.parts}
+                        categoryList={orderCategories}
+                        partCategoryList={partCategories}
                         onUpdate={(newOrders) => onUpdateData({ ...data, orderMasters: newOrders })}
+                    />
+                )}
+                {tab === 'categories' && (
+                    <CategoryManager
+                        partCategories={partCategories}
+                        orderCategories={orderCategories}
+                        onUpdatePartCategories={(cats) => onUpdateData({ ...data, partCategories: cats })}
+                        onUpdateOrderCategories={(cats) => onUpdateData({ ...data, orderCategories: cats })}
                     />
                 )}
                 {tab === 'stats' && (

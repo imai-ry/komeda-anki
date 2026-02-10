@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { resizeImage } from '../../utils/image';
 
-const PartManager = ({ parts, onUpdate }) => {
+const PartManager = ({ parts, categoryList, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState({ name: '', category: '', image: '' });
 
-    // Derive dynamic categories
-    const categories = Array.from(new Set(parts.map(p => p.category || '未分類')));
+    // Derive dynamic categories (pre-defined + any already in parts)
+    const categories = Array.from(new Set([...categoryList, ...parts.map(p => p.category || '未分類')]));
     const [activeCategory, setActiveCategory] = useState(categories[0] || '未分類');
 
     const handleEdit = (part) => {
@@ -74,16 +74,17 @@ const PartManager = ({ parts, onUpdate }) => {
                             <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="例: コーヒーカップ" />
                         </div>
                         <div className="form-group">
-                            <label>カテゴリ (自由入力)</label>
-                            <input
-                                list="part-categories"
+                            <label>カテゴリ</label>
+                            <select
                                 value={form.category}
                                 onChange={e => setForm({ ...form, category: e.target.value })}
-                                placeholder="例: ドリンク"
-                            />
-                            <datalist id="part-categories">
-                                {categories.filter(c => c !== '未分類').map(c => <option key={c} value={c} />)}
-                            </datalist>
+                            >
+                                <option value="">未分類</option>
+                                {categoryList.map(c => <option key={c} value={c}>{c}</option>)}
+                                {form.category && !categoryList.includes(form.category) && (
+                                    <option value={form.category}>{form.category} (削除済み)</option>
+                                )}
+                            </select>
                         </div>
                         <div className="form-group">
                             <label>画像</label>

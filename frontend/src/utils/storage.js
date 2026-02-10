@@ -6,7 +6,11 @@ export const loadData = (initialData) => {
         saveData(initialData);
         return initialData;
     }
-    return JSON.parse(saved);
+    const data = JSON.parse(saved);
+    // Migration: ensure category lists exist
+    if (!data.partCategories) data.partCategories = initialData.partCategories || [];
+    if (!data.orderCategories) data.orderCategories = initialData.orderCategories || [];
+    return data;
 };
 
 export const saveData = (data) => {

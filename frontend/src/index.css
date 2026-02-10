@@ -346,8 +346,9 @@ header h1 {
 
 .category-tabs {
     display: flex;
-    overflow-x: auto;
-    gap: 5px;
+    flex-wrap: wrap;
+    /* Allow wrapping */
+    gap: 8px;
     padding: 10px;
     border-bottom: 1px solid #eee;
 }
@@ -1069,6 +1070,7 @@ footer {
     border-radius: 8px;
     cursor: pointer;
 }
+
 /* Admin Management Panes */
 .pane-header-with-tabs {
     display: flex;
@@ -1083,9 +1085,9 @@ footer {
 .admin-category-tabs {
     flex: 1;
     display: flex;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    /* Allow wrapping */
     gap: 6px;
-    padding-bottom: 2px;
 }
 
 .admin-category-tabs button {
@@ -1119,4 +1121,62 @@ footer {
     font-weight: bold;
     cursor: pointer;
     white-space: nowrap;
+}
+
+/* Category Manager Styles */
+.category-manager .category-section {
+    padding: 10px 0;
+}
+
+.category-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.category-input-group input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.category-input-group button {
+    padding: 8px 20px;
+    background: var(--komeda-red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.category-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.remove-tag {
+    border: none;
+    background: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.remove-tag:hover {
+    color: #ff4444;
 }

@@ -84,5 +84,7 @@ export const INITIAL_ORDER_MASTERS = [
 
 export const INITIAL_DATA = {
     parts: INITIAL_PARTS,
-    orderMasters: INITIAL_ORDER_MASTERS
+    orderMasters: INITIAL_ORDER_MASTERS,
+    partCategories: Object.values(CATEGORIES),
+    orderCategories: Object.values(CATEGORIES).filter(c => c !== CATEGORIES.PLATE) // Plates usually aren't order categories
 };
