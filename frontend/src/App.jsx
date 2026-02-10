@@ -297,7 +297,7 @@ function App() {
           <div className="zoom-content" onClick={e => e.stopPropagation()}>
             <img src={zoomedItem.image} alt={zoomedItem.name} />
             <div className="zoom-info">
-              <h3>{zoomedItem.name}</h3>
+              {!data.settings?.hideNames && <h3>{zoomedItem.name}</h3>}
               <button className="add-from-zoom" onClick={() => { addPart(zoomedItem); setZoomedItem(null); }}>
                 トレイに追加
               </button>
