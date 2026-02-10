@@ -883,3 +883,189 @@ footer {
         flex: 0 1 200px;
     }
 }
+
+/* --- Order Editor Redesign (Tile Grid Fix) --- */
+.order-modal-redesign {
+    background: white;
+    width: 98%;
+    max-width: 480px;
+    border-radius: 12px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header-lite {
+    padding: 10px;
+    background: var(--komeda-red);
+    color: white;
+    text-align: center;
+}
+
+.modal-header-lite h4 {
+    margin: 0;
+}
+
+.modal-scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 5px;
+}
+
+.editor-tray-section,
+.editor-selection-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.editor-tray-section label,
+.editor-selection-section label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.tray-preview-lite {
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 70px;
+}
+
+.tray-item-lite {
+    width: 55px;
+    height: 55px;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.tray-item-lite img {
+    height: 30px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.tray-item-lite span {
+    font-size: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.category-tabs-lite {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    padding-bottom: 5px;
+}
+
+.category-tabs-lite button {
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    background: #fdfdfd;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.category-tabs-lite button.active {
+    background: var(--komeda-red);
+    color: white;
+}
+
+/* Part Grid (Tiles) inside Modal */
+.parts-grid-lite {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) !important;
+    /* 3-column tile grid like main app */
+    gap: 8px !important;
+}
+
+.menu-card-lite {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.menu-image-lite {
+    width: 100%;
+    height: 40px;
+    /* Limit image height to keep tiles compact */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-image-lite img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.menu-name-lite {
+    font-size: 0.6rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+    color: #333;
+}
+
+.modal-actions {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #eee;
+}
+
+.save-btn {
+    flex: 2;
+    padding: 12px;
+    background: var(--komeda-red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    flex: 1;
+    padding: 12px;
+    background: #eee;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
