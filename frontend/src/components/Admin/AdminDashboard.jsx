@@ -12,6 +12,19 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
         }
     };
 
+    const updateSettings = (key, value) => {
+        const val = parseInt(value);
+        if (isNaN(val) || val < 1) return;
+
+        onUpdateData({
+            ...data,
+            settings: {
+                ...data.settings,
+                [key]: val
+            }
+        });
+    };
+
     // 統計情報の集計
     const statsList = data.orderMasters
         .map(order => ({
@@ -74,6 +87,35 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
                 )}
                 {tab === 'data' && (
                     <div className="manager-pane">
+                        <section className="settings-section">
+                            <h3>出題設定</h3>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>最小注文数</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={data.settings?.minOrders || 1}
+                                        onChange={(e) => updateSettings('minOrders', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>最大注文数</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={data.settings?.maxOrders || 4}
+                                        onChange={(e) => updateSettings('maxOrders', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            {data.settings?.minOrders > data.settings?.maxOrders && (
+                                <p className="error-text">※ 最小値は最大値以下にしてください</p>
+                            )}
+                        </section>
+
+                        <hr className="divider" />
+
                         <h3>バックアップと復元</h3>
                         <p className="description">現在のすべての設定（画像、パーツ、統計情報含む）を保存または復元します。</p>
                         <div className="data-actions">

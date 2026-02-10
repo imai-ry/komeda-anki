@@ -20,6 +20,9 @@ function App() {
     if (!loaded.stats) {
       loaded.stats = {};
     }
+    if (!loaded.settings) {
+      loaded.settings = { minOrders: 1, maxOrders: 4 };
+    }
     setData(loaded);
   }, []);
 
@@ -45,7 +48,9 @@ function App() {
       pool = weightedPool;
     }
 
-    const count = Math.floor(Math.random() * 3) + 1;
+    const min = data.settings?.minOrders || 1;
+    const max = data.settings?.maxOrders || 4;
+    const count = Math.floor(Math.random() * (max - min + 1)) + min;
     const orders = [];
     for (let i = 0; i < count; i++) {
       orders.push(pool[Math.floor(Math.random() * pool.length)]);

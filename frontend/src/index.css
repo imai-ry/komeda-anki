@@ -618,6 +618,37 @@ footer {
     padding: 15px;
 }
 
+.settings-section {
+    background: #fdfdfd;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+.error-text {
+    color: var(--komeda-red);
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
 .part-list-item,
 .order-list-item {
     background: white;
