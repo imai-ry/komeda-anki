@@ -14,13 +14,14 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
         setForm({ displayName: '', shortName: '', requiredPartIds: [] });
     };
 
-    const togglePart = (partId) => {
-        const current = [...form.requiredPartIds];
-        if (current.includes(partId)) {
-            setForm({ ...form, requiredPartIds: current.filter(id => id !== partId) });
-        } else {
-            setForm({ ...form, requiredPartIds: [...current, partId] });
-        }
+    const addPartToOrder = (partId) => {
+        setForm({ ...form, requiredPartIds: [...form.requiredPartIds, partId] });
+    };
+
+    const removePartAt = (index) => {
+        const next = [...form.requiredPartIds];
+        next.splice(index, 1);
+        setForm({ ...form, requiredPartIds: next });
     };
 
     const handleSave = () => {
@@ -58,18 +59,34 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                             <input value={form.shortName} onChange={e => setForm({ ...form, shortName: e.target.value })} placeholder="例: ホット" />
                         </div>
                         <div className="form-group">
-                            <label>正解パーツを選択</label>
+                            <label>正解パーツを選択（クリックで追加）</label>
                             <div className="part-selector">
                                 {parts.map(part => (
                                     <div
                                         key={part.id}
-                                        className={`selector-item ${form.requiredPartIds.includes(part.id) ? 'active' : ''}`}
-                                        onClick={() => togglePart(part.id)}
+                                        className="selector-item active"
+                                        onClick={() => addPartToOrder(part.id)}
                                     >
                                         <img src={part.image} alt="" />
                                         <span>{part.name}</span>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>現在の構成（タップで削除）</label>
+                            <div className="current-parts-preview">
+                                {form.requiredPartIds.length === 0 && <p className="empty-hint">パーツが選択されていません</p>}
+                                {form.requiredPartIds.map((id, idx) => {
+                                    const part = parts.find(p => p.id === id);
+                                    return (
+                                        <div key={idx} className="preview-item" onClick={() => removePartAt(idx)}>
+                                            <img src={part?.image} alt="" />
+                                            <span>{part?.name}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                         <div className="modal-actions">

@@ -199,15 +199,7 @@ function App() {
           </div>
         </section>
 
-        <section
-          className="tray-section"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const part = JSON.parse(e.dataTransfer.getData('part'));
-            addPart(part);
-          }}
-        >
+        <section className="tray-section">
           <div className="tray-header">
             選択中: 注文 {activeOrderIndex + 1} のトレイ
           </div>
@@ -239,10 +231,6 @@ function App() {
               <div
                 key={part.id}
                 className="menu-card"
-                draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('part', JSON.stringify(part));
-                }}
                 onClick={() => addPart(part)}
               >
                 <button

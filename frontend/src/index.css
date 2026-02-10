@@ -386,13 +386,8 @@ header h1 {
     align-items: center;
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    cursor: grab;
+    cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    user-select: none;
-}
-
-.menu-card:active {
-    cursor: grabbing;
 }
 
 .menu-card:hover {
@@ -424,10 +419,6 @@ header h1 {
     transform: scale(1.1);
 }
 
-.tray-section[onDrop]:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: white;
-}
 
 .menu-image {
     width: 100%;
