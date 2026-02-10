@@ -12,10 +12,14 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [quizMode, setQuizMode] = useState('random'); // 'random' | 'weakness'
 
   // 初期化ロード
   useEffect(() => {
     const loaded = loadData(INITIAL_DATA);
+    if (!loaded.stats) {
+      loaded.stats = {};
+    }
     setData(loaded);
   }, []);
 
@@ -27,17 +31,31 @@ function App() {
   // 注文生成
   const generateQuestion = useCallback(() => {
     if (!data || data.orderMasters.length === 0) return;
+
+    let pool = [...data.orderMasters];
+    if (quizMode === 'weakness') {
+      const weightedPool = [];
+      data.orderMasters.forEach(order => {
+        const errorCount = data.stats?.[order.id] || 0;
+        const weight = 1 + errorCount;
+        for (let i = 0; i < weight; i++) {
+          weightedPool.push(order);
+        }
+      });
+      pool = weightedPool;
+    }
+
     const count = Math.floor(Math.random() * 3) + 1;
     const orders = [];
     for (let i = 0; i < count; i++) {
-      orders.push(data.orderMasters[Math.floor(Math.random() * data.orderMasters.length)]);
+      orders.push(pool[Math.floor(Math.random() * pool.length)]);
     }
     setCurrentOrders(orders);
     setSelections({});
     setActiveOrderIndex(0);
     setFeedback(null);
     setShowAnswers(false);
-  }, [data]);
+  }, [data, quizMode]);
 
   useEffect(() => {
     if (data && currentOrders.length === 0) {
@@ -92,6 +110,17 @@ function App() {
       };
     });
 
+    if (!allCorrect) {
+      const newStats = { ...data.stats };
+      detailedAnswers.forEach((ans, i) => {
+        if (!ans.isCorrect) {
+          const orderId = currentOrders[i].id;
+          newStats[orderId] = (newStats[orderId] || 0) + 1;
+        }
+      });
+      onUpdateData({ ...data, stats: newStats });
+    }
+
     setFeedback({
       status: allCorrect ? 'success' : 'error',
       message: allCorrect ? 'すべてのセットが正解です！' : 'セットが間違っています。やり直してください。',
@@ -122,6 +151,20 @@ function App() {
         <div className="header-left">
           <h1>コメダセット暗記</h1>
           <button className="refresh-btn" onClick={generateQuestion} title="問題を更新">🔄</button>
+          <div className="mode-toggle">
+            <button
+              className={quizMode === 'random' ? 'active' : ''}
+              onClick={() => setQuizMode('random')}
+            >
+              ランダム
+            </button>
+            <button
+              className={quizMode === 'weakness' ? 'active' : ''}
+              onClick={() => setQuizMode('weakness')}
+            >
+              苦手優先
+            </button>
+          </div>
         </div>
         <button className="admin-toggle" onClick={() => setIsAdmin(true)}>⚙️</button>
       </header>

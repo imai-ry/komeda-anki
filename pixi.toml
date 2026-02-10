@@ -6,6 +6,8 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
+dev = "cd frontend && npm run dev"
+build = "cd frontend && npm run build"
 
 [dependencies]
 nodejs = ">=20"
