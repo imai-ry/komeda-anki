@@ -783,29 +783,6 @@ footer {
     margin-top: 10px;
 }
 
-.part-selector {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-}
-
-.selector-item {
-    border: 1px solid #eee;
-    padding: 5px;
-    opacity: 0.5;
-    font-size: 0.6rem;
-}
-
-.selector-item.active {
-    border-color: var(--komeda-red);
-    opacity: 1;
-}
-
-.selector-item img {
-    width: 100%;
-    height: 30px;
-    object-fit: contain;
-}
 
 @keyframes popIn {
     from {

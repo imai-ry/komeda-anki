@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { CATEGORIES } from '../../data/menu';
 
 const OrderManager = ({ orderMasters, parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState({ displayName: '', shortName: '', requiredPartIds: [] });
+    const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
 
     const handleEdit = (order) => {
         setEditingId(order.id);
@@ -48,50 +50,72 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
 
             {editingId && (
                 <div className="modal-overlay">
-                    <div className="modal order-modal">
-                        <h4>{editingId === 'new' ? '注文セット新規登録' : '注文セット編集'}</h4>
-                        <div className="form-group">
-                            <label>注文名称（フルネーム）</label>
-                            <input value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} placeholder="例: コメダブレンド" />
-                        </div>
-                        <div className="form-group">
-                            <label>略称（注文伝票用）</label>
-                            <input value={form.shortName} onChange={e => setForm({ ...form, shortName: e.target.value })} placeholder="例: ホット" />
-                        </div>
-                        <div className="form-group">
-                            <label>正解パーツを選択（クリックで追加）</label>
-                            <div className="part-selector">
-                                {parts.map(part => (
-                                    <div
-                                        key={part.id}
-                                        className="selector-item active"
-                                        onClick={() => addPartToOrder(part.id)}
-                                    >
-                                        <img src={part.image} alt="" />
-                                        <span>{part.name}</span>
-                                    </div>
-                                ))}
+                    <div className="modal order-modal-redesign">
+                        <header className="modal-header-lite">
+                            <h4>{editingId === 'new' ? '注文セット新規登録' : '注文セット編集'}</h4>
+                        </header>
+
+                        <div className="modal-scroll-content">
+                            <div className="form-group-row">
+                                <div className="form-group">
+                                    <label>注文名称</label>
+                                    <input value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} placeholder="例: コメダブレンド" />
+                                </div>
+                                <div className="form-group">
+                                    <label>伝票略称</label>
+                                    <input value={form.shortName} onChange={e => setForm({ ...form, shortName: e.target.value })} placeholder="例: ホット" />
+                                </div>
+                            </div>
+
+                            <div className="editor-tray-section">
+                                <label>現在の構成（タップで削除）</label>
+                                <div className="tray-preview-lite">
+                                    {form.requiredPartIds.length === 0 && <p className="empty-hint">パーツを選択してください</p>}
+                                    {form.requiredPartIds.map((id, idx) => {
+                                        const part = parts.find(p => p.id === id);
+                                        return (
+                                            <div key={idx} className="tray-item-lite" onClick={() => removePartAt(idx)}>
+                                                <img src={part?.image} alt="" />
+                                                <span>{part?.name}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="editor-selection-section">
+                                <label>パーツを選択（タップして追加）</label>
+                                <div className="category-tabs-lite">
+                                    {Object.values(CATEGORIES).map(cat => (
+                                        <button
+                                            key={cat}
+                                            className={activeCategory === cat ? 'active' : ''}
+                                            onClick={() => setActiveCategory(cat)}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="parts-grid-lite">
+                                    {parts.filter(p => p.category === activeCategory).map(part => (
+                                        <div
+                                            key={part.id}
+                                            className="menu-card-lite"
+                                            onClick={() => addPartToOrder(part.id)}
+                                        >
+                                            <div className="menu-image-lite">
+                                                <img src={part.image} alt="" />
+                                            </div>
+                                            <div className="menu-name-lite">{part.name}</div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="form-group">
-                            <label>現在の構成（タップで削除）</label>
-                            <div className="current-parts-preview">
-                                {form.requiredPartIds.length === 0 && <p className="empty-hint">パーツが選択されていません</p>}
-                                {form.requiredPartIds.map((id, idx) => {
-                                    const part = parts.find(p => p.id === id);
-                                    return (
-                                        <div key={idx} className="preview-item" onClick={() => removePartAt(idx)}>
-                                            <img src={part?.image} alt="" />
-                                            <span>{part?.name}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
                         <div className="modal-actions">
-                            <button onClick={handleSave}>保存</button>
-                            <button onClick={() => setEditingId(null)}>キャンセル</button>
+                            <button className="save-btn" onClick={handleSave}>保存</button>
+                            <button className="cancel-btn" onClick={() => setEditingId(null)}>キャンセル</button>
                         </div>
                     </div>
                 </div>
