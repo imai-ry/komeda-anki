@@ -15,6 +15,21 @@ function App() {
   const [quizMode, setQuizMode] = useState('random'); // 'random' | 'weakness'
   const [zoomedItem, setZoomedItem] = useState(null);
 
+  // Derive dynamic categories from parts
+  const partCategories = useMemo(() => {
+    if (!data) return [];
+    return Array.from(new Set(data.parts.map(p => p.category || '未分類')));
+  }, [data?.parts]);
+
+  // Ensure activeCategory is valid and set initial if null
+  useEffect(() => {
+    if (data && partCategories.length > 0) {
+      if (!activeCategory || !partCategories.includes(activeCategory)) {
+        setActiveCategory(partCategories[0]);
+      }
+    }
+  }, [partCategories, activeCategory, data]);
+
   // 初期化ロード
   useEffect(() => {
     const loaded = loadData(INITIAL_DATA);
@@ -144,21 +159,6 @@ function App() {
   };
 
   if (!data) return <div className="loading">ロード中...</div>;
-
-  // Derive dynamic categories from parts
-  const partCategories = useMemo(() => {
-    if (!data) return [];
-    return Array.from(new Set(data.parts.map(p => p.category || '未分類')));
-  }, [data?.parts]);
-
-  // Ensure activeCategory is valid and set initial if null
-  useEffect(() => {
-    if (data && partCategories.length > 0) {
-      if (!activeCategory || !partCategories.includes(activeCategory)) {
-        setActiveCategory(partCategories[0]);
-      }
-    }
-  }, [partCategories, activeCategory, data]);
 
   if (isAdmin) {
     return <AdminDashboard data={data} onUpdateData={onUpdateData} onClose={() => setIsAdmin(false)} />;
