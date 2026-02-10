@@ -4,7 +4,7 @@ import { resizeImage } from '../../utils/image';
 
 const PartManager = ({ parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ name: '', shortName: '', category: '皿・食器', image: '' });
+    const [form, setForm] = useState({ name: '', category: '皿・食器', image: '' });
 
     const handleEdit = (part) => {
         setEditingId(part.id);
@@ -13,7 +13,7 @@ const PartManager = ({ parts, onUpdate }) => {
 
     const handleCreate = () => {
         setEditingId('new');
-        setForm({ name: '', shortName: '', category: '皿・食器', image: '' });
+        setForm({ name: '', category: '皿・食器', image: '' });
     };
 
     const handleFileChange = async (e) => {
@@ -55,10 +55,6 @@ const PartManager = ({ parts, onUpdate }) => {
                             <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="例: コーヒーカップ" />
                         </div>
                         <div className="form-group">
-                            <label>略称</label>
-                            <input value={form.shortName} onChange={e => setForm({ ...form, shortName: e.target.value })} placeholder="例: カップ" />
-                        </div>
-                        <div className="form-group">
                             <label>カテゴリ</label>
                             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
                                 {Object.values(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
@@ -83,7 +79,7 @@ const PartManager = ({ parts, onUpdate }) => {
                         <img src={part.image} alt="" />
                         <div className="info">
                             <div className="name">{part.name}</div>
-                            <div className="short">略: {part.shortName} | {part.category}</div>
+                            <div className="short">{part.category}</div>
                         </div>
                         <div className="actions">
                             <button onClick={() => handleEdit(part)}>編</button>
