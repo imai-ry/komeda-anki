@@ -13,6 +13,7 @@ function App() {
   const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
   const [showAnswers, setShowAnswers] = useState(false);
   const [quizMode, setQuizMode] = useState('random'); // 'random' | 'weakness'
+  const [zoomedItem, setZoomedItem] = useState(null);
 
   // 初期化ロード
   useEffect(() => {
@@ -21,7 +22,7 @@ function App() {
       loaded.stats = {};
     }
     if (!loaded.settings) {
-      loaded.settings = { minOrders: 1, maxOrders: 4 };
+      loaded.settings = { minOrders: 1, maxOrders: 4, hideNames: false };
     }
     setData(loaded);
   }, []);
@@ -230,12 +231,13 @@ function App() {
               <div
                 key={part.id}
                 className="menu-card"
-                onClick={() => addPart(part)}
+                onClick={() => setZoomedItem(part)}
+                onDoubleClick={() => addPart(part)}
               >
                 <div className="menu-image">
                   <img src={part.image} alt="" />
                 </div>
-                <div className="menu-name">{part.name}</div>
+                {!data.settings?.hideNames && <div className="menu-name">{part.name}</div>}
               </div>
             ))}
           </div>
@@ -278,6 +280,20 @@ function App() {
             <button className={`modal-next-btn ${feedback.status}`} onClick={handleNext}>
               {feedback.status === 'success' ? '次の問題へ' : 'やり直す'}
             </button>
+          </div>
+        </div>
+      )}
+      {zoomedItem && (
+        <div className="zoom-overlay" onClick={() => setZoomedItem(null)}>
+          <div className="zoom-content" onClick={e => e.stopPropagation()}>
+            <img src={zoomedItem.image} alt={zoomedItem.name} />
+            <div className="zoom-info">
+              <h3>{zoomedItem.name}</h3>
+              <button className="add-from-zoom" onClick={() => { addPart(zoomedItem); setZoomedItem(null); }}>
+                トレイに追加
+              </button>
+            </div>
+            <button className="zoom-close" onClick={() => setZoomedItem(null)}>✕</button>
           </div>
         </div>
       )}

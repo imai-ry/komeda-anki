@@ -13,8 +13,11 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
     };
 
     const updateSettings = (key, value) => {
-        const val = parseInt(value);
-        if (isNaN(val) || val < 1) return;
+        let val = value;
+        if (key === 'minOrders' || key === 'maxOrders') {
+            val = parseInt(value);
+            if (isNaN(val) || val < 1) return;
+        }
 
         onUpdateData({
             ...data,
@@ -107,6 +110,16 @@ const AdminDashboard = ({ data, onUpdateData, onClose }) => {
                                         value={data.settings?.maxOrders || 4}
                                         onChange={(e) => updateSettings('maxOrders', e.target.value)}
                                     />
+                                </div>
+                                <div className="form-group-checkbox">
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={data.settings?.hideNames || false}
+                                            onChange={(e) => updateSettings('hideNames', e.target.checked)}
+                                        />
+                                        アイテム名を非表示
+                                    </label>
                                 </div>
                             </div>
                             {data.settings?.minOrders > data.settings?.maxOrders && (
