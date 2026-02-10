@@ -10,7 +10,7 @@ function App() {
   const [activeOrderIndex, setActiveOrderIndex] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
+  const [activeCategory, setActiveCategory] = useState(null);
   const [showAnswers, setShowAnswers] = useState(false);
   const [quizMode, setQuizMode] = useState('random'); // 'random' | 'weakness'
   const [zoomedItem, setZoomedItem] = useState(null);
@@ -145,11 +145,22 @@ function App() {
 
   if (!data) return <div className="loading">ロード中...</div>;
 
+  // Derive dynamic categories from parts
+  const partCategories = Array.from(new Set(data.parts.map(p => p.category || '未分類')));
+
+  // Ensure activeCategory is valid and set initial if null
+  useEffect(() => {
+    if (data && partCategories.length > 0 && (!activeCategory || !partCategories.includes(activeCategory))) {
+      setActiveCategory(partCategories[0]);
+    }
+  }, [data, partCategories, activeCategory]);
+
   if (isAdmin) {
     return <AdminDashboard data={data} onUpdateData={onUpdateData} onClose={() => setIsAdmin(false)} />;
   }
 
   const activeParts = selections[activeOrderIndex] || [];
+  const filteredParts = data.parts.filter(p => (p.category || '未分類') === activeCategory);
 
   return (
     <div className="app">
@@ -216,7 +227,7 @@ function App() {
 
         <section className="selection-area">
           <div className="category-tabs">
-            {Object.values(CATEGORIES).map(cat => (
+            {partCategories.map(cat => (
               <button
                 key={cat}
                 className={activeCategory === cat ? 'active' : ''}
@@ -227,7 +238,7 @@ function App() {
             ))}
           </div>
           <div className="parts-grid">
-            {data.parts.filter(p => p.category === activeCategory).map(part => (
+            {filteredParts.map(part => (
               <div
                 key={part.id}
                 className="menu-card"

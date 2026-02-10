@@ -1,20 +1,24 @@
 import { useState } from 'react';
-import { CATEGORIES } from '../../data/menu';
 
 const OrderManager = ({ orderMasters, parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ displayName: '', shortName: '', category: Object.values(CATEGORIES)[0], requiredPartIds: [] });
-    const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
-    const [activePartCategory, setActivePartCategory] = useState(Object.values(CATEGORIES)[0]);
+    const [form, setForm] = useState({ displayName: '', shortName: '', category: '', requiredPartIds: [] });
+
+    // Derive dynamic categories
+    const orderCategories = Array.from(new Set(orderMasters.map(o => o.category || '未分類')));
+    const partCategories = Array.from(new Set(parts.map(p => p.category || '未分類')));
+
+    const [activeCategory, setActiveCategory] = useState(orderCategories[0] || '未分類');
+    const [activePartCategory, setActivePartCategory] = useState(partCategories[0] || '未分類');
 
     const handleEdit = (order) => {
         setEditingId(order.id);
-        setForm(order);
+        setForm({ ...order, category: order.category || '' });
     };
 
     const handleCreate = () => {
         setEditingId('new');
-        setForm({ displayName: '', shortName: '', category: activeCategory, requiredPartIds: [] });
+        setForm({ displayName: '', shortName: '', category: activeCategory === '未分類' ? '' : activeCategory, requiredPartIds: [] });
     };
 
     const addPartToOrder = (partId) => {
@@ -29,10 +33,11 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
 
     const handleSave = () => {
         let newMasters;
+        const finalForm = { ...form, category: form.category.trim() };
         if (editingId === 'new') {
-            newMasters = [...orderMasters, { ...form, id: Date.now().toString() }];
+            newMasters = [...orderMasters, { ...finalForm, id: Date.now().toString() }];
         } else {
-            newMasters = orderMasters.map(o => o.id === editingId ? form : o);
+            newMasters = orderMasters.map(o => o.id === editingId ? finalForm : o);
         }
         onUpdate(newMasters);
         setEditingId(null);
@@ -44,14 +49,14 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
         }
     };
 
-    const filteredOrders = orderMasters.filter(o => (o.category || Object.values(CATEGORIES)[0]) === activeCategory);
+    const filteredOrders = orderMasters.filter(o => (o.category || '未分類') === activeCategory);
 
     return (
         <div className="manager-pane">
             <div className="pane-header-with-tabs">
                 <h3>注文セット管理 ({orderMasters.length})</h3>
                 <div className="admin-category-tabs">
-                    {Object.values(CATEGORIES).map(cat => (
+                    {orderCategories.map(cat => (
                         <button
                             key={cat}
                             className={activeCategory === cat ? 'active' : ''}
@@ -84,10 +89,16 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                             </div>
 
                             <div className="form-group">
-                                <label>表示カテゴリ</label>
-                                <select value={form.category || Object.values(CATEGORIES)[0]} onChange={e => setForm({ ...form, category: e.target.value })}>
-                                    {Object.values(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
+                                <label>表示カテゴリ (自由入力)</label>
+                                <input
+                                    list="order-categories"
+                                    value={form.category}
+                                    onChange={e => setForm({ ...form, category: e.target.value })}
+                                    placeholder="例: ドリンク"
+                                />
+                                <datalist id="order-categories">
+                                    {orderCategories.filter(c => c !== '未分類').map(c => <option key={c} value={c} />)}
+                                </datalist>
                             </div>
 
                             <div className="editor-tray-section">
@@ -109,7 +120,7 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                             <div className="editor-selection-section">
                                 <label>パーツを選択（タップして追加）</label>
                                 <div className="category-tabs-lite">
-                                    {Object.values(CATEGORIES).map(cat => (
+                                    {partCategories.map(cat => (
                                         <button
                                             key={cat}
                                             className={activePartCategory === cat ? 'active' : ''}
@@ -120,7 +131,7 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                                     ))}
                                 </div>
                                 <div className="parts-grid-lite">
-                                    {parts.filter(p => p.category === activePartCategory).map(part => (
+                                    {parts.filter(p => (p.category || '未分類') === activePartCategory).map(part => (
                                         <div
                                             key={part.id}
                                             className="menu-card-lite"
@@ -150,7 +161,7 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                     <div key={order.id} className="order-list-item">
                         <div className="info">
                             <div className="name">{order.displayName} ({order.shortName})</div>
-                            <div className="details">カテゴリ: {order.category || '未設定'} / パーツ数: {order.requiredPartIds.length}</div>
+                            <div className="details">カテゴリ: {order.category || '未分類'} / パーツ数: {order.requiredPartIds.length}</div>
                         </div>
                         <div className="actions">
                             <button onClick={() => handleEdit(order)}>編</button>

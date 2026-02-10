@@ -1,20 +1,22 @@
 import { useState } from 'react';
-import { CATEGORIES } from '../../data/menu';
 import { resizeImage } from '../../utils/image';
 
 const PartManager = ({ parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ name: '', category: Object.values(CATEGORIES)[0], image: '' });
-    const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
+    const [form, setForm] = useState({ name: '', category: '', image: '' });
+
+    // Derive dynamic categories
+    const categories = Array.from(new Set(parts.map(p => p.category || '未分類')));
+    const [activeCategory, setActiveCategory] = useState(categories[0] || '未分類');
 
     const handleEdit = (part) => {
         setEditingId(part.id);
-        setForm(part);
+        setForm({ ...part, category: part.category || '' });
     };
 
     const handleCreate = () => {
         setEditingId('new');
-        setForm({ name: '', category: activeCategory, image: '' });
+        setForm({ name: '', category: activeCategory === '未分類' ? '' : activeCategory, image: '' });
     };
 
     const handleFileChange = async (e) => {
@@ -27,10 +29,11 @@ const PartManager = ({ parts, onUpdate }) => {
 
     const handleSave = () => {
         let newParts;
+        const finalForm = { ...form, category: form.category.trim() };
         if (editingId === 'new') {
-            newParts = [...parts, { ...form, id: Date.now().toString() }];
+            newParts = [...parts, { ...finalForm, id: Date.now().toString() }];
         } else {
-            newParts = parts.map(p => p.id === editingId ? form : p);
+            newParts = parts.map(p => p.id === editingId ? finalForm : p);
         }
         onUpdate(newParts);
         setEditingId(null);
@@ -42,14 +45,14 @@ const PartManager = ({ parts, onUpdate }) => {
         }
     };
 
-    const filteredParts = parts.filter(p => p.category === activeCategory);
+    const filteredParts = parts.filter(p => (p.category || '未分類') === activeCategory);
 
     return (
         <div className="manager-pane">
             <div className="pane-header-with-tabs">
                 <h3>パーツ管理 ({parts.length})</h3>
                 <div className="admin-category-tabs">
-                    {Object.values(CATEGORIES).map(cat => (
+                    {categories.map(cat => (
                         <button
                             key={cat}
                             className={activeCategory === cat ? 'active' : ''}
@@ -71,10 +74,16 @@ const PartManager = ({ parts, onUpdate }) => {
                             <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="例: コーヒーカップ" />
                         </div>
                         <div className="form-group">
-                            <label>カテゴリ</label>
-                            <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-                                {Object.values(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
+                            <label>カテゴリ (自由入力)</label>
+                            <input
+                                list="part-categories"
+                                value={form.category}
+                                onChange={e => setForm({ ...form, category: e.target.value })}
+                                placeholder="例: ドリンク"
+                            />
+                            <datalist id="part-categories">
+                                {categories.filter(c => c !== '未分類').map(c => <option key={c} value={c} />)}
+                            </datalist>
                         </div>
                         <div className="form-group">
                             <label>画像</label>
@@ -96,7 +105,7 @@ const PartManager = ({ parts, onUpdate }) => {
                         <img src={part.image} alt="" />
                         <div className="info">
                             <div className="name">{part.name}</div>
-                            <div className="short">{part.category}</div>
+                            <div className="short">{part.category || '未分類'}</div>
                         </div>
                         <div className="actions">
                             <button onClick={() => handleEdit(part)}>編</button>
