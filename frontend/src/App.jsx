@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { INITIAL_DATA, CATEGORIES } from './data/menu';
 import { loadData, saveData } from './utils/storage';
 import AdminDashboard from './components/Admin/AdminDashboard';
@@ -146,14 +146,19 @@ function App() {
   if (!data) return <div className="loading">ロード中...</div>;
 
   // Derive dynamic categories from parts
-  const partCategories = Array.from(new Set(data.parts.map(p => p.category || '未分類')));
+  const partCategories = useMemo(() => {
+    if (!data) return [];
+    return Array.from(new Set(data.parts.map(p => p.category || '未分類')));
+  }, [data?.parts]);
 
   // Ensure activeCategory is valid and set initial if null
   useEffect(() => {
-    if (data && partCategories.length > 0 && (!activeCategory || !partCategories.includes(activeCategory))) {
-      setActiveCategory(partCategories[0]);
+    if (data && partCategories.length > 0) {
+      if (!activeCategory || !partCategories.includes(activeCategory)) {
+        setActiveCategory(partCategories[0]);
+      }
     }
-  }, [data, partCategories, activeCategory]);
+  }, [partCategories, activeCategory, data]);
 
   if (isAdmin) {
     return <AdminDashboard data={data} onUpdateData={onUpdateData} onClose={() => setIsAdmin(false)} />;
