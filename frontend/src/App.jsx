@@ -199,7 +199,15 @@ function App() {
           </div>
         </section>
 
-        <section className="tray-section">
+        <section
+          className="tray-section"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            const part = JSON.parse(e.dataTransfer.getData('part'));
+            addPart(part);
+          }}
+        >
           <div className="tray-header">
             選択中: 注文 {activeOrderIndex + 1} のトレイ
           </div>
@@ -231,9 +239,22 @@ function App() {
               <div
                 key={part.id}
                 className="menu-card"
-                onClick={() => setZoomedItem(part)}
-                onDoubleClick={() => addPart(part)}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('part', JSON.stringify(part));
+                }}
+                onClick={() => addPart(part)}
               >
+                <button
+                  className="zoom-trigger"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoomedItem(part);
+                  }}
+                  title="拡大表示"
+                >
+                  🔍
+                </button>
                 <div className="menu-image">
                   <img src={part.image} alt="" />
                 </div>
