@@ -3,8 +3,9 @@ import { CATEGORIES } from '../../data/menu';
 
 const OrderManager = ({ orderMasters, parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ displayName: '', shortName: '', requiredPartIds: [] });
+    const [form, setForm] = useState({ displayName: '', shortName: '', category: Object.values(CATEGORIES)[0], requiredPartIds: [] });
     const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
+    const [activePartCategory, setActivePartCategory] = useState(Object.values(CATEGORIES)[0]);
 
     const handleEdit = (order) => {
         setEditingId(order.id);
@@ -13,7 +14,7 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
 
     const handleCreate = () => {
         setEditingId('new');
-        setForm({ displayName: '', shortName: '', requiredPartIds: [] });
+        setForm({ displayName: '', shortName: '', category: activeCategory, requiredPartIds: [] });
     };
 
     const addPartToOrder = (partId) => {
@@ -43,10 +44,25 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
         }
     };
 
+    const filteredOrders = orderMasters.filter(o => (o.category || Object.values(CATEGORIES)[0]) === activeCategory);
+
     return (
         <div className="manager-pane">
-            <h3>注文セット管理 ({orderMasters.length})</h3>
-            <button className="add-btn" onClick={handleCreate}>新規作成</button>
+            <div className="pane-header-with-tabs">
+                <h3>注文セット管理 ({orderMasters.length})</h3>
+                <div className="admin-category-tabs">
+                    {Object.values(CATEGORIES).map(cat => (
+                        <button
+                            key={cat}
+                            className={activeCategory === cat ? 'active' : ''}
+                            onClick={() => setActiveCategory(cat)}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+                <button className="add-btn" onClick={handleCreate}>新規作成</button>
+            </div>
 
             {editingId && (
                 <div className="modal-overlay">
@@ -65,6 +81,13 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                                     <label>伝票略称</label>
                                     <input value={form.shortName} onChange={e => setForm({ ...form, shortName: e.target.value })} placeholder="例: ホット" />
                                 </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>表示カテゴリ</label>
+                                <select value={form.category || Object.values(CATEGORIES)[0]} onChange={e => setForm({ ...form, category: e.target.value })}>
+                                    {Object.values(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
                             </div>
 
                             <div className="editor-tray-section">
@@ -89,15 +112,15 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
                                     {Object.values(CATEGORIES).map(cat => (
                                         <button
                                             key={cat}
-                                            className={activeCategory === cat ? 'active' : ''}
-                                            onClick={() => setActiveCategory(cat)}
+                                            className={activePartCategory === cat ? 'active' : ''}
+                                            onClick={() => setActivePartCategory(cat)}
                                         >
                                             {cat}
                                         </button>
                                     ))}
                                 </div>
                                 <div className="parts-grid-lite">
-                                    {parts.filter(p => p.category === activeCategory).map(part => (
+                                    {parts.filter(p => p.category === activePartCategory).map(part => (
                                         <div
                                             key={part.id}
                                             className="menu-card-lite"
@@ -122,11 +145,12 @@ const OrderManager = ({ orderMasters, parts, onUpdate }) => {
             )}
 
             <div className="order-list-admin">
-                {orderMasters.map(order => (
+                {filteredOrders.length === 0 && <p className="empty-msg">このカテゴリに注文セットはありません</p>}
+                {filteredOrders.map(order => (
                     <div key={order.id} className="order-list-item">
                         <div className="info">
                             <div className="name">{order.displayName} ({order.shortName})</div>
-                            <div className="details">パーツ数: {order.requiredPartIds.length}</div>
+                            <div className="details">カテゴリ: {order.category || '未設定'} / パーツ数: {order.requiredPartIds.length}</div>
                         </div>
                         <div className="actions">
                             <button onClick={() => handleEdit(order)}>編</button>

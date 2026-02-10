@@ -61,20 +61,23 @@ export const INITIAL_PARTS = [
 export const INITIAL_ORDER_MASTERS = [
     {
         id: 'order-1',
-        displayName: 'コメダ珈琲',
+        displayName: 'コメダブレンド',
         shortName: 'ホット',
+        category: CATEGORIES.DRINK,
         requiredPartIds: ['komeda-coffee', 'bean-snack', 'coffee-cup-plate']
     },
     {
         id: 'order-2',
         displayName: 'アイスコーヒー',
         shortName: 'アイス',
+        category: CATEGORIES.DRINK,
         requiredPartIds: ['ice-coffee', 'bean-snack', 'ice-coffee-cup-plate']
     },
     {
         id: 'order-3',
         displayName: 'シロノワール',
         shortName: 'シロ',
+        category: CATEGORIES.FOOD,
         requiredPartIds: ['shiro-noir', 'fork', 'dessert-plate']
     }
 ];
