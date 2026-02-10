@@ -1069,3 +1069,54 @@ footer {
     border-radius: 8px;
     cursor: pointer;
 }
+/* Admin Management Panes */
+.pane-header-with-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    gap: 15px;
+}
+
+.admin-category-tabs {
+    flex: 1;
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 2px;
+}
+
+.admin-category-tabs button {
+    white-space: nowrap;
+    padding: 5px 12px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #666;
+}
+
+.admin-category-tabs button:hover {
+    border-color: #999;
+}
+
+.admin-category-tabs button.active {
+    background: var(--komeda-red);
+    color: white;
+    border-color: var(--komeda-red);
+}
+
+.add-btn {
+    background: var(--komeda-red);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}

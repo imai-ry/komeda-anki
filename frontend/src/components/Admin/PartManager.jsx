@@ -4,7 +4,8 @@ import { resizeImage } from '../../utils/image';
 
 const PartManager = ({ parts, onUpdate }) => {
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ name: '', category: '皿・食器', image: '' });
+    const [form, setForm] = useState({ name: '', category: Object.values(CATEGORIES)[0], image: '' });
+    const [activeCategory, setActiveCategory] = useState(Object.values(CATEGORIES)[0]);
 
     const handleEdit = (part) => {
         setEditingId(part.id);
@@ -13,7 +14,7 @@ const PartManager = ({ parts, onUpdate }) => {
 
     const handleCreate = () => {
         setEditingId('new');
-        setForm({ name: '', category: '皿・食器', image: '' });
+        setForm({ name: '', category: activeCategory, image: '' });
     };
 
     const handleFileChange = async (e) => {
@@ -41,10 +42,25 @@ const PartManager = ({ parts, onUpdate }) => {
         }
     };
 
+    const filteredParts = parts.filter(p => p.category === activeCategory);
+
     return (
         <div className="manager-pane">
-            <h3>パーツ管理 ({parts.length})</h3>
-            <button className="add-btn" onClick={handleCreate}>新規作成</button>
+            <div className="pane-header-with-tabs">
+                <h3>パーツ管理 ({parts.length})</h3>
+                <div className="admin-category-tabs">
+                    {Object.values(CATEGORIES).map(cat => (
+                        <button
+                            key={cat}
+                            className={activeCategory === cat ? 'active' : ''}
+                            onClick={() => setActiveCategory(cat)}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+                <button className="add-btn" onClick={handleCreate}>新規登録</button>
+            </div>
 
             {editingId && (
                 <div className="modal-overlay">
@@ -74,7 +90,8 @@ const PartManager = ({ parts, onUpdate }) => {
             )}
 
             <div className="parts-list">
-                {parts.map(part => (
+                {filteredParts.length === 0 && <p className="empty-msg">このカテゴリにパーツはありません</p>}
+                {filteredParts.map(part => (
                     <div key={part.id} className="part-list-item">
                         <img src={part.image} alt="" />
                         <div className="info">
