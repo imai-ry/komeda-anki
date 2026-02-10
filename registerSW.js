@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/komeda-anki/sw.js', { scope: '/komeda-anki/' })})}
